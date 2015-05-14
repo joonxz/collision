@@ -1,0 +1,26 @@
+{
+  "name": "collision",
+  "version": "1.0.0",
+  "description": "Colission Testing",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joonxz/collision.git"
+  },
+  "author": "Joonxz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/joonxz/collision/issues"
+  },
+  "homepage": "https://github.com/joonxz/collision",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-concat": "^2.5.2",
+    "gulp-csso": "^1.0.0",
+    "gulp-jshint": "^1.10.0",
+    "gulp-livereload": "^3.8.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-sass": "^2.0.1",
+    "gulp-uglify": "^1.2.0"
+  }
+}
