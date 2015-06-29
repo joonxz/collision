@@ -67,6 +67,8 @@
     }
   };
 
+  // collision detection
+
   // var collide = function () {
   //   var distX = shape1.x - shape2.x;
   //   var distY = shape1.y - shape2.y;
@@ -76,13 +78,30 @@
   var gp = navigator.getGamepads()[0];
   console.log(gp);
 
+  
+ 
   if (gp.connected == true ) {
     document.getElementById('js-connected').innerHTML = "Gamepad Connected: " + gp.id;
   };
   
   var draw = function () {
     var gp = navigator.getGamepads()[0];
-    console.log();
+    console.log(gp.axes[1]);
+
+    // Gamepad Axes mapping including deadzone threshold
+    joystickX = gp.axes[0] > 0.1 ? gp.axes[0] : 0.0 || gp.axes[0] < -0.1 ? gp.axes[0] : 0.0;
+    joystickY = gp.axes[1] > 0.1 ? gp.axes[1] : 0.0 || gp.axes[1] < -0.1 ? gp.axes[1] : 0.0;
+
+    for (var i = 0; i < gp.buttons.length; i++) {
+      if (gp.buttons[i].pressed == true) {
+        console.log(gp.buttons[i] + gp.buttons[i].pressed);
+      }
+    };
+
+    // for (var i = 0; i < gp.axes.length; i++) {
+    //   console.log(gp.axes[i] + gp.axes[i].pressed);
+    // };
+
     
     clear();
 
