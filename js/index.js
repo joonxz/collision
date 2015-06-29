@@ -28,6 +28,15 @@
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
   };
 
+  // window.addEventListener("gamepadconnected", function(e) {
+  //   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
+  //     e.gamepad.index, e.gamepad.id,
+  //     e.gamepad.buttons.length, e.gamepad.axes.length);
+  // });
+  
+
+  
+
   document.onkeydown = function(e) {
     switch (e.keyCode) {
       case 37:
@@ -67,6 +76,8 @@
   };
 
   var draw = function () {
+    var gp = navigator.getGamepads()[0];
+    // console.log(gp);
     clear();
 
     ctx.save();
@@ -85,26 +96,3 @@
   
 
 })();
-
-
-// canvas.addEventListener("mousedown", function (e) {
-
-//   for (var i = 0; i < spots.length; i++) {
-//     // applied the pythagorean theorem
-//     var dx = spots[i].x - mousePos.x;
-//     var dy = spots[i].y - mousePos.y;
-//     var distSquared = dx * dx + dy * dy;
-//     var radiusSquared = spots[i].radius * spots[i].radius;
-
-//     var drag = function () {
-      
-//     }
-
-//     if (distSquared < radiusSquared) {
-//       // spots[i].drag();
-//       console.log("im in there");
-//     } 
-
-//   };
-  
-// }); 

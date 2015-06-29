@@ -26,8 +26,9 @@
 
   var clear = function () {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  };
+  };  
 
+  // mapping
   document.onkeydown = function(e) {
     switch (e.keyCode) {
       case 37:
@@ -66,7 +67,23 @@
     }
   };
 
+  // var collide = function () {
+  //   var distX = shape1.x - shape2.x;
+  //   var distY = shape1.y - shape2.y;
+  //   var distance = Math.sqrt
+  // };
+
+  var gp = navigator.getGamepads()[0];
+  console.log(gp);
+
+  if (gp.connected == true ) {
+    document.getElementById('js-connected').innerHTML = "Gamepad Connected: " + gp.id;
+  };
+  
   var draw = function () {
+    var gp = navigator.getGamepads()[0];
+    console.log();
+    
     clear();
 
     ctx.save();
@@ -85,26 +102,3 @@
   
 
 })();
-
-
-// canvas.addEventListener("mousedown", function (e) {
-
-//   for (var i = 0; i < spots.length; i++) {
-//     // applied the pythagorean theorem
-//     var dx = spots[i].x - mousePos.x;
-//     var dy = spots[i].y - mousePos.y;
-//     var distSquared = dx * dx + dy * dy;
-//     var radiusSquared = spots[i].radius * spots[i].radius;
-
-//     var drag = function () {
-      
-//     }
-
-//     if (distSquared < radiusSquared) {
-//       // spots[i].drag();
-//       console.log("im in there");
-//     } 
-
-//   };
-  
-// }); 
