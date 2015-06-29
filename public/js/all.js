@@ -9,6 +9,7 @@
   var joystickX = 0;
   var joystickY = 0;
 
+  // gets available gamepad - in this case XBOX 360 controller
   var gpActive = function () {
     var gp = navigator.getGamepads()[0];
 
@@ -17,29 +18,22 @@
     joystickY = Math.abs(gp.axes[1]) > 0.1 ? gp.axes[1] * -1 : 0.0;
   };
   
+  // create array for objects
   var circleList = {};
 
+  // define Circle object
   var Circle = function (id,x,y,r,c) {
-    var circle = {
+    var whatever = {
       id:id,
       x:x,
       y:y,
       r:r,
       c:c
     };
-    circleList[id] = circle;
+    circleList[id] = whatever;
   }
-  
-  var handleInput = function () {
-    gpActive();
-    circleList.ship.x += (joystickX * 2);
-    circleList.ship.y -= (joystickY * 2);
-  };
 
-  Circle('ship',50,40,40,'rgb(200,0,0)');
-  Circle('earth',300,300,40,'rgb(0,200,0');
-
-
+  // drawing params for circle onto canvas
   var drawCircle = function (circle) {
     ctx.save();
     ctx.beginPath();
@@ -49,6 +43,10 @@
     ctx.fill();
     ctx.restore();
   };
+
+  // declare characters
+  Circle('ship',50,40,40,'rgb(200,0,0)');
+  Circle('earth',300,300,40,'rgb(0,200,0');
 
   // mapping
   document.onkeydown = function(e) {
@@ -89,19 +87,29 @@
     }
   };
 
-
+  // helper to declare whether the gamepad is connected or not on load
   var gp = navigator.getGamepads()[0];
   console.log(gp);
 
   if (gp.connected == true ) {
     document.getElementById('js-connected').innerHTML = "Gamepad Connected: " + gp.id;
   };
+  // -------------------
 
+  // updates variables according to whats pressed
+  var handleInput = function () {
+    gpActive();
+    circleList.ship.x += (joystickX * 2);
+    circleList.ship.y -= (joystickY * 2);
+  };
+
+  // Game logic and will go in the simulation function
   var simulation = function (time) {
     // circleList.earth.x = Math.sin(time / 1000) * 100 + 300.0;
     // circleList.earth.y = Math.cos(time / 1000) * 100 + 300.0;
   };
 
+  // clear canvas then loop through all objects and draw
   var draw = function () {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
@@ -110,14 +118,17 @@
     };
   };
 
+  // doFrame function name is game loop convention name
   var doFrame = function (time) {
     handleInput();
     simulation(time);
     draw();
 
+    // loop request
     window.requestAnimationFrame(doFrame);
   };
 
+  // initial request
   window.requestAnimationFrame(doFrame);
   
 
