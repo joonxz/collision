@@ -6,27 +6,49 @@
   var canvasWidth = canvas.clientWidth;
   var canvasHeight = canvas.clientHeight;
 
-  var x = 0;
-  var y = 0;
   var joystickX = 0;
   var joystickY = 0;
-  
-  var rect = function (x, y, l, w) {
-    ctx.fillStyle = "rgb(200,0,0)";
-    ctx.fillRect (x, y, l, w);
+
+  var gpActive = function () {
+    var gp = navigator.getGamepads()[0];
+
+    // Gamepad Axes mapping including deadzone threshold
+    joystickX = Math.abs(gp.axes[0]) > 0.1 ? gp.axes[0] : 0.0 ;
+    joystickY = Math.abs(gp.axes[1]) > 0.1 ? gp.axes[1] * -1 : 0.0;
   };
   
-  var circle = function (x, y, r) {
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI*2, true); 
-    ctx.closePath();
-    ctx.fillStyle = "rgb(0,200,0)";
-    ctx.fill();
+  var circleList = {};
+
+  var Circle = function (id,x,y,r,c) {
+    var circle = {
+      id:id,
+      x:x,
+      y:y,
+      r:r,
+      c:c
+    };
+    circleList[id] = circle;
+  }
+  
+  var handleInput = function () {
+    gpActive();
+    circleList.ship.x += (joystickX * 2);
+    circleList.ship.y -= (joystickY * 2);
   };
 
-  var clear = function () {
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  };  
+  Circle('ship',50,40,40,'rgb(200,0,0)');
+  Circle('earth',300,300,40,'rgb(0,200,0');
+
+
+  var drawCircle = function (circle) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI*2, true); 
+    ctx.closePath();
+    ctx.fillStyle = circle.c;
+    ctx.fill();
+    ctx.restore();
+  };
 
   // mapping
   document.onkeydown = function(e) {
@@ -67,51 +89,36 @@
     }
   };
 
-  // collision detection
-
-  // var collide = function () {
-  //   var distX = shape1.x - shape2.x;
-  //   var distY = shape1.y - shape2.y;
-  //   var distance = Math.sqrt
-  // };
 
   var gp = navigator.getGamepads()[0];
   console.log(gp);
 
-  
   if (gp.connected == true ) {
     document.getElementById('js-connected').innerHTML = "Gamepad Connected: " + gp.id;
   };
-  
-  var draw = function () {
-    var gp = navigator.getGamepads()[0];
-    console.log(gp.axes[1]);
 
-    // Gamepad Axes mapping including deadzone threshold
-    joystickX = Math.abs(gp.axes[0]) > 0.1 ? gp.axes[0] : 0.0 ;
-    joystickY = Math.abs(gp.axes[1]) > 0.1 ? gp.axes[1] * -1 : 0.0;
-
-    for (var i = 0; i < gp.buttons.length; i++) {
-      if (gp.buttons[i].pressed == true) {
-        console.log(gp.buttons[i] + gp.buttons[i].pressed);
-      }
-    };
-    
-    clear();
-
-    ctx.save();
-    x = x + (joystickX * 2);
-    y = y - (joystickY * 2);
-    rect(30 + x, 20 + y, 50,50);
-    ctx.restore();
-
-    ctx.save();
-    circle(300,300,40);
-
-    window.requestAnimationFrame(draw);
+  var simulation = function (time) {
+    // circleList.earth.x = Math.sin(time / 1000) * 100 + 300.0;
+    // circleList.earth.y = Math.cos(time / 1000) * 100 + 300.0;
   };
 
-  window.requestAnimationFrame(draw);
+  var draw = function () {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    for (var id in circleList) {
+      drawCircle(circleList[id]);
+    };
+  };
+
+  var doFrame = function (time) {
+    handleInput();
+    simulation(time);
+    draw();
+
+    window.requestAnimationFrame(doFrame);
+  };
+
+  window.requestAnimationFrame(doFrame);
   
 
 })();
