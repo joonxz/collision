@@ -79,7 +79,6 @@
   console.log(gp);
 
   
- 
   if (gp.connected == true ) {
     document.getElementById('js-connected').innerHTML = "Gamepad Connected: " + gp.id;
   };
@@ -89,19 +88,14 @@
     console.log(gp.axes[1]);
 
     // Gamepad Axes mapping including deadzone threshold
-    joystickX = gp.axes[0] > 0.1 ? gp.axes[0] : 0.0 || gp.axes[0] < -0.1 ? gp.axes[0] : 0.0;
-    joystickY = gp.axes[1] > 0.1 ? gp.axes[1] : 0.0 || gp.axes[1] < -0.1 ? gp.axes[1] : 0.0;
+    joystickX = Math.abs(gp.axes[0]) > 0.1 ? gp.axes[0] : 0.0 ;
+    joystickY = Math.abs(gp.axes[1]) > 0.1 ? gp.axes[1] * -1 : 0.0;
 
     for (var i = 0; i < gp.buttons.length; i++) {
       if (gp.buttons[i].pressed == true) {
         console.log(gp.buttons[i] + gp.buttons[i].pressed);
       }
     };
-
-    // for (var i = 0; i < gp.axes.length; i++) {
-    //   console.log(gp.axes[i] + gp.axes[i].pressed);
-    // };
-
     
     clear();
 
