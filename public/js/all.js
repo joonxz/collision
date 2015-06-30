@@ -22,7 +22,7 @@
   var circleList = {};
 
   // define Circle object
-  var Circle = function (id,x,y,r,c) {
+  var circle = function (id,x,y,r,c) {
     var whatever = {
       id:id,
       x:x,
@@ -31,7 +31,7 @@
       c:c
     };
     circleList[id] = whatever;
-  }
+  };
 
   // drawing params for circle onto canvas
   var drawCircle = function (circle) {
@@ -45,8 +45,8 @@
   };
 
   // declare characters
-  Circle('ship',50,40,40,'rgb(200,0,0)');
-  Circle('earth',300,300,40,'rgb(0,200,0');
+  circle('ship',50,40,40,'rgb(200,0,0)');
+  circle('earth',300,300,40,'rgb(0,200,0');
 
   // mapping
   document.onkeydown = function(e) {
@@ -91,9 +91,9 @@
   var gp = navigator.getGamepads()[0];
   console.log(gp);
 
-  if (gp.connected == true ) {
+  if (gp.connected === true ) {
     document.getElementById('js-connected').innerHTML = "Gamepad Connected: " + gp.id;
-  };
+  }
   // -------------------
 
   // updates variables according to whats pressed
@@ -103,10 +103,21 @@
     circleList.ship.y -= (joystickY * 2);
   };
 
-  // Game logic and will go in the simulation function
+  // Game logic will go in the simulation function
   var simulation = function (time) {
-    // circleList.earth.x = Math.sin(time / 1000) * 100 + 300.0;
-    // circleList.earth.y = Math.cos(time / 1000) * 100 + 300.0;
+    // circle to circle collision detection
+    var sumRadius = circleList.ship.r + circleList.earth.r;
+    var distance = Math.sqrt(Math.pow(circleList.ship.x - circleList.earth.x, 2) + Math.pow(circleList.ship.y - circleList.earth.y, 2));
+    
+    // refactor to OOP to have a collided state and normal
+    if (distance < sumRadius) {
+      circleList.ship.c = 'rgb(0,0,200)';
+    } else{
+      circleList.ship.c = 'rgb(200,0,0)';
+    }
+
+    circleList.earth.x = Math.sin(time / 1000) * 100 + 300.0;
+    circleList.earth.y = Math.cos(time / 1000) * 100 + 300.0;
   };
 
   // clear canvas then loop through all objects and draw
@@ -115,7 +126,7 @@
 
     for (var id in circleList) {
       drawCircle(circleList[id]);
-    };
+    }
   };
 
   // doFrame function name is game loop convention name

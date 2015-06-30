@@ -6,37 +6,49 @@
   var canvasWidth = canvas.clientWidth;
   var canvasHeight = canvas.clientHeight;
 
-  var x = 0;
-  var y = 0;
   var joystickX = 0;
   var joystickY = 0;
-  
-  var rect = function (x, y, l, w) {
-    ctx.fillStyle = "rgb(200,0,0)";
-    ctx.fillRect (x, y, l, w);
+
+  // gets available gamepad - in this case XBOX 360 controller
+  var gpActive = function () {
+    var gp = navigator.getGamepads()[0];
+
+    // Gamepad Axes mapping including deadzone threshold
+    joystickX = Math.abs(gp.axes[0]) > 0.1 ? gp.axes[0] : 0.0 ;
+    joystickY = Math.abs(gp.axes[1]) > 0.1 ? gp.axes[1] * -1 : 0.0;
   };
   
-  var circle = function (x, y, r) {
+  // create array for objects
+  var circleList = {};
+
+  // define Circle object
+  var circle = function (id,x,y,r,c) {
+    var whatever = {
+      id:id,
+      x:x,
+      y:y,
+      r:r,
+      c:c
+    };
+    circleList[id] = whatever;
+  };
+
+  // drawing params for circle onto canvas
+  var drawCircle = function (circle) {
+    ctx.save();
     ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI*2, true); 
+    ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI*2, true); 
     ctx.closePath();
-    ctx.fillStyle = "rgb(0,200,0)";
+    ctx.fillStyle = circle.c;
     ctx.fill();
+    ctx.restore();
   };
 
-  var clear = function () {
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-  };
+  // declare characters
+  circle('ship',50,40,40,'rgb(200,0,0)');
+  circle('earth',300,300,40,'rgb(0,200,0');
 
-  // window.addEventListener("gamepadconnected", function(e) {
-  //   console.log("Gamepad connected at index %d: %s. %d buttons, %d axes.",
-  //     e.gamepad.index, e.gamepad.id,
-  //     e.gamepad.buttons.length, e.gamepad.axes.length);
-  // });
-  
-
-  
-
+  // mapping
   document.onkeydown = function(e) {
     switch (e.keyCode) {
       case 37:
@@ -75,24 +87,60 @@
     }
   };
 
-  var draw = function () {
-    var gp = navigator.getGamepads()[0];
-    // console.log(gp);
-    clear();
+  // helper to declare whether the gamepad is connected or not on load
+  var gp = navigator.getGamepads()[0];
+  console.log(gp);
 
-    ctx.save();
-    x = x + (joystickX * 2);
-    y = y - (joystickY * 2);
-    rect(30 + x, 20 + y, 50,50);
-    ctx.restore();
+  if (gp.connected === true ) {
+    document.getElementById('js-connected').innerHTML = "Gamepad Connected: " + gp.id;
+  }
+  // -------------------
 
-    ctx.save();
-    circle(300,300,40);
-
-    window.requestAnimationFrame(draw);
+  // updates variables according to whats pressed
+  var handleInput = function () {
+    gpActive();
+    circleList.ship.x += (joystickX * 2);
+    circleList.ship.y -= (joystickY * 2);
   };
 
-  window.requestAnimationFrame(draw);
+  // Game logic will go in the simulation function
+  var simulation = function (time) {
+    // circle to circle collision detection
+    var sumRadius = circleList.ship.r + circleList.earth.r;
+    var distance = Math.sqrt(Math.pow(circleList.ship.x - circleList.earth.x, 2) + Math.pow(circleList.ship.y - circleList.earth.y, 2));
+    
+    // refactor to OOP to have a collided state and normal
+    if (distance < sumRadius) {
+      circleList.ship.c = 'rgb(0,0,200)';
+    } else{
+      circleList.ship.c = 'rgb(200,0,0)';
+    }
+
+    circleList.earth.x = Math.sin(time / 1000) * 100 + 300.0;
+    circleList.earth.y = Math.cos(time / 1000) * 100 + 300.0;
+  };
+
+  // clear canvas then loop through all objects and draw
+  var draw = function () {
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+    for (var id in circleList) {
+      drawCircle(circleList[id]);
+    }
+  };
+
+  // doFrame function name is game loop convention name
+  var doFrame = function (time) {
+    handleInput();
+    simulation(time);
+    draw();
+
+    // loop request
+    window.requestAnimationFrame(doFrame);
+  };
+
+  // initial request
+  window.requestAnimationFrame(doFrame);
   
 
 })();

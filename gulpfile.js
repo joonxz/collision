@@ -49,8 +49,8 @@ gulp.task('markup', function() {
 gulp.task('watch', function() {
     livereload.listen();
     gulp.watch('public/*',['markup']);
-    gulp.watch('js/**/*', ['build','lint-js']);
-    gulp.watch('sass/**/*', ['sass']);
+    gulp.watch('js/*', ['build','lint-js']);
+    gulp.watch('sass/*', ['sass']);
 });
 
 // Default Task
