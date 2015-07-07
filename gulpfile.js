@@ -30,13 +30,13 @@ gulp.task('sass', function() {
 
 // Concatenate & Minify JS
 gulp.task('build', function() {
-    gulp.src('js/*.js')
-        .pipe(concat('all.js'))
-        .pipe(gulp.dest('public/js'))
-        .pipe(rename('all.min.js'))
-        .pipe(uglify())
-        .pipe(gulp.dest('public/js'))
-        .pipe(livereload());
+    // gulp.src('js/*.js')
+    //     .pipe(concat('all.js'))
+    //     .pipe(gulp.dest('public/js'))
+    //     .pipe(rename('all.min.js'))
+    //     .pipe(uglify())
+    //     .pipe(gulp.dest('public/js'))
+    //     .pipe(livereload());
 });
 
 // Livereload Html changes
