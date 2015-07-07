@@ -9,44 +9,86 @@
   var joystickX = 0;
   var joystickY = 0;
 
+//--------------------------------
+  var Circle = function (x, y, radius, color) {
+    this.x = x;
+    this.y = y;
+    this.radius = radius;
+    this.color = color;
+  };
+
+  Circle.prototype.update = function(time) {
+    
+  };
+
+  Circle.prototype.draw = function(ctx) {
+    ctx.save();
+    {
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, true); 
+      ctx.closePath();
+      ctx.fillStyle = this.color;
+      ctx.fill();
+    }
+    ctx.restore();
+  };
+
+  Circle.prototype.collidesWith = function(otherCircle) {
+    var sumRadius = otherCircle.radius + this.radius;
+    var distance = Math.sqrt(Math.pow(otherCircle.x - this.x, 2) + Math.pow(otherCircle.y - this.y, 2));
+    return distance <= sumRadius;
+  };
+
+//--------------------------------
+
+//--------------------------------
+  var Enemy = function (x, y, radius, color) {
+    this.x = x;
+    this.y = y;
+
+    this.centerX = x;
+    this.centerY = y;
+
+    this.radius = radius;
+    this.color = color;
+  };
+
+  Enemy.prototype = new Circle;
+
+  Enemy.prototype.update = function(time) {
+    this.x = Math.sin(time / 1000) * 100 + this.centerX;
+    this.y = Math.cos(time / 1000) * 100 + this.centerY;
+  };
+//--------------------------------
+
+//--------------------------------
+
+  var player = new Circle(50, 40, 40, 'red');
+
+  var entities = [];
+
+  entities.push(new Enemy(300, 300, 20, 'green'));
+  entities.push(new Enemy(150, 150, 20, 'blue'));
+  entities.push(player);
+  
+//--------------------------------
+
+
+
+
+
   // gets available gamepad - in this case XBOX 360 controller
   var gpActive = function () {
     var gp = navigator.getGamepads()[0];
 
-    // Gamepad Axes mapping including deadzone threshold
-    joystickX = Math.abs(gp.axes[0]) > 0.1 ? gp.axes[0] : 0.0 ;
-    joystickY = Math.abs(gp.axes[1]) > 0.1 ? gp.axes[1] * -1 : 0.0;
-  };
-  
-  // create array for objects
-  var circleList = {};
-
-  // define Circle object
-  var circle = function (id,x,y,r,c) {
-    var whatever = {
-      id:id,
-      x:x,
-      y:y,
-      r:r,
-      c:c
-    };
-    circleList[id] = whatever;
+    if (gp) {
+      // Gamepad Axes mapping including deadzone threshold
+      joystickX = Math.abs(gp.axes[0]) > 0.1 ? gp.axes[0] : 0.0 ;
+      joystickY = Math.abs(gp.axes[1]) > 0.1 ? gp.axes[1] * -1 : 0.0;
+    }
+    
   };
 
-  // drawing params for circle onto canvas
-  var drawCircle = function (circle) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(circle.x, circle.y, circle.r, 0, Math.PI*2, true); 
-    ctx.closePath();
-    ctx.fillStyle = circle.c;
-    ctx.fill();
-    ctx.restore();
-  };
-
-  // declare characters
-  circle('ship',50,40,40,'rgb(200,0,0)');
-  circle('earth',300,300,40,'rgb(0,200,0');
 
   // mapping
   document.onkeydown = function(e) {
@@ -88,45 +130,43 @@
   };
 
   // helper to declare whether the gamepad is connected or not on load
-  var gp = navigator.getGamepads()[0];
-  console.log(gp);
 
-  if (gp.connected === true ) {
-    document.getElementById('js-connected').innerHTML = "Gamepad Connected: " + gp.id;
-  }
   // -------------------
 
   // updates variables according to whats pressed
   var handleInput = function () {
     gpActive();
-    circleList.ship.x += (joystickX * 2);
-    circleList.ship.y -= (joystickY * 2);
+    player.x += (joystickX * 2);
+    player.y -= (joystickY * 2);
   };
 
   // Game logic will go in the simulation function
   var simulation = function (time) {
-    // circle to circle collision detection
-    var sumRadius = circleList.ship.r + circleList.earth.r;
-    var distance = Math.sqrt(Math.pow(circleList.ship.x - circleList.earth.x, 2) + Math.pow(circleList.ship.y - circleList.earth.y, 2));
-    
-    // refactor to OOP to have a collided state and normal
-    if (distance < sumRadius) {
-      circleList.ship.c = 'rgb(0,0,200)';
-    } else{
-      circleList.ship.c = 'rgb(200,0,0)';
+    player.color = 'red';
+
+    for (var i = 0; i < entities.length; i++) {
+      entities[i].update(time);
     }
 
-    circleList.earth.x = Math.sin(time / 1000) * 100 + 300.0;
-    circleList.earth.y = Math.cos(time / 1000) * 100 + 300.0;
+    for (var i = 0; i < entities.length; i++) {
+      var entity = entities[i];
+
+      if (entity instanceof Enemy) { 
+        // refactor to OOP to have a collided state and normal
+        if (player.collidesWith(entity)) {
+          player.color = 'orange';
+        }     
+      }
+    }
   };
 
   // clear canvas then loop through all objects and draw
   var draw = function () {
     ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    for (var id in circleList) {
-      drawCircle(circleList[id]);
-    }
+    for (var i = 0; i < entities.length; i++) {
+      entities[i].draw(ctx);
+    };
   };
 
   // doFrame function name is game loop convention name
