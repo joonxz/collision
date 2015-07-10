@@ -13,7 +13,9 @@ var simulation = function (time) {
       // refactor to OOP to have a collided state and normal
       if (player.collidesWith(entity)) {
         player.color = 'orange';
-      }     
+      }
     }
   }
+
+  // ai();
 };

@@ -5,4 +5,6 @@ var draw = function () {
   for (var i = 0; i < entities.length; i++) {
     entities[i].draw(ctx);
   };
+
+  ai();
 };

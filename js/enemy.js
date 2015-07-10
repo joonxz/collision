@@ -10,10 +10,12 @@ var Enemy = function (x, y, radius, color) {
   this.color = color;
 };
 
-Enemy.prototype = new Circle;
+Enemy.prototype = new Circle();
 
 Enemy.prototype.update = function(time) {
-  
+  this.x = this.x + this.velocity.x;
+  this.y = this.y + this.velocity.y;
+
   // logic to have enemies get closer to player -----
   var deltaX = player.x - this.x;
   var deltaY = player.y - this.y;
@@ -25,8 +27,7 @@ Enemy.prototype.update = function(time) {
   this.velocity.x = vectorX;
   this.velocity.y = vectorY;
 
-  this.x = this.x + this.velocity.x;
-  this.y = this.y + this.velocity.y;
+
 
 };
 
