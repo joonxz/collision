@@ -1,4 +1,2 @@
 #Collision Testing
-Testing some collision testing
-
-
+Testing some collision using sprites
